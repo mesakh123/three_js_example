@@ -1,155 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>kanye west clone</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" />
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-      }
 
-      .tree-div {
-        height: 100%;
-      }
-    </style>
-    <!-- Import maps polyfill -->
-    <!-- Remove this when import maps will be widely supported -->
-    <script
-      async
-      src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"
-    ></script>
+<head>
+  <title>kanye west clone</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" />
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
 
-    <script type="importmap">
+    .tree-div {
+      height: 100%;
+    }
+  </style>
+  <!-- Import maps polyfill -->
+  <!-- Remove this when import maps will be widely supported -->
+  <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+  <script type="importmap">
       {
         "imports": {
           "three": "https://cdn.jsdelivr.net/npm/three@0.139.2/build/three.module.js"
         }
       }
     </script>
-  </head>
+</head>
 
-  <body>
-    <script type="module">
-      import * as THREE from "three";
-      import { MTLLoader } from "https://cdn.jsdelivr.net/npm/three@0.139.2/examples/jsm/loaders/MTLLoader.js";
-      import { OBJLoader } from "https://cdn.jsdelivr.net/npm/three@0.139.2/examples/jsm/loaders/OBJLoader.js";
-      import { ArcballControls } from "https://cdn.jsdelivr.net/npm/three@0.139.2/examples/jsm/controls/ArcballControls.js";
+<body>
+  <script type="module">
+    import * as THREE from "three";
+    import { MTLLoader } from "https://cdn.jsdelivr.net/npm/three@0.139.2/examples/jsm/loaders/MTLLoader.js";
+    import { OBJLoader } from "https://cdn.jsdelivr.net/npm/three@0.139.2/examples/jsm/loaders/OBJLoader.js";
+    import { ArcballControls } from "https://cdn.jsdelivr.net/npm/three@0.139.2/examples/jsm/controls/ArcballControls.js";
 
-      let camera, scene, controls, renderer, blenderObj, pointLight;
-      let windowHalfY = window.innerHeight * 0.6;
+    let camera, scene, controls, renderer, blenderObj, pointLight;
 
-      init();
-      animate();
 
-      function init() {
-        const container = document.createElement("div");
-        document.body.appendChild(container);
+    init();
+    animate();
 
-        camera = new THREE.PerspectiveCamera(30, 1, 1, 12);
-        camera.position.z = 1.5;
-        camera.position.x = 0.04;
+    function init() {
+      const container = document.createElement("div");
+      document.body.appendChild(container);
 
-        // scene
+      camera = new THREE.PerspectiveCamera(30, 1, 0.001, 12);
+      camera.position.z = 1.5;
+      camera.position.x = 0.04;
 
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color("black");
+      // scene
 
-        const ambientLight = new THREE.AmbientLight(0xcccccc, 0.8);
-        scene.add(ambientLight);
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color("gray");
 
-        pointLight = new THREE.PointLight(0xffffff, 0.6);
-        pointLight.position.set(0, 50, 50);
-        camera.add(pointLight);
+      const ambientLight = new THREE.AmbientLight(0xcccccc, 0.8);
+      scene.add(ambientLight);
 
-        scene.add(camera);
+      pointLight = new THREE.PointLight(0xffffff, 0.6);
+      pointLight.position.set(0, 50, 50);
+      camera.add(pointLight);
 
-        // model
+      scene.add(camera);
 
-        const onProgress = function (xhr) {
-          if (xhr.lengthComputable) {
-            const percentComplete = (xhr.loaded / xhr.total) * 100;
-            console.log(Math.round(percentComplete, 2) + "% downloaded");
-          }
-        };
+      // model
 
-        const onError = function () {};
+      const onProgress = function (xhr) {
+        if (xhr.lengthComputable) {
+          const percentComplete = (xhr.loaded / xhr.total) * 100;
+          console.log(Math.round(percentComplete, 2) + "% downloaded");
+        }
+      };
 
-        const manager = new THREE.LoadingManager();
-        let path = "data/";
-        let model_obj = "textured_output.obj";
-        let model_mtl = "textured_output.mtl";
-        let model_texture = "textured_output.jpg";
-        let scale = 0.15;
+      const onError = function () { };
 
-        const loader = new THREE.TextureLoader();
-        const texture = loader.setPath(path).load(model_texture);
-        texture.encoding = THREE.sRGBEncoding;
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.magFilter = THREE.NearestFilter;
+      const manager = new THREE.LoadingManager();
+      let path = "data/";
+      let model_obj = "textured_output.obj";
+      let model_mtl = "textured_output.mtl";
+      let model_texture = "textured_output.jpg";
+      let scale = 0.15;
 
-        new MTLLoader(manager)
-          .setPath(path)
-          .load(model_mtl, function (materials) {
-            materials.preload();
-            new OBJLoader(manager)
-              .setMaterials(materials)
-              .setPath(path)
-              .load(
-                model_obj,
-                function (object) {
-                  object.traverse(function (child) {
-                    // aka setTexture
-                    if (child instanceof THREE.Mesh) {
-                      child.material.map = texture;
-                    }
-                  });
-                  scene.add(object);
-                },
-                onProgress,
-                onError
-              );
-          });
+      const loader = new THREE.TextureLoader();
+      const texture = loader.setPath(path).load(model_texture);
+      texture.encoding = THREE.sRGBEncoding;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.magFilter = THREE.NearestFilter;
 
-        //
-
-        renderer = new THREE.WebGLRenderer();
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, windowHalfY);
-        container.appendChild(renderer.domElement);
-
-        controls = new ArcballControls(camera, renderer.domElement, scene);
-        controls.addEventListener("change", render);
-        controls.setGizmosVisible(false);
-
-        window.addEventListener("resize", onWindowResize);
-      }
-
-      function onWindowResize() {
-        camera.aspect = window.innerWidth / windowHalfY;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, windowHalfY);
-      }
+      new MTLLoader(manager)
+        .setPath(path)
+        .load(model_mtl, function (materials) {
+          materials.preload();
+          new OBJLoader(manager)
+            .setMaterials(materials)
+            .setPath(path)
+            .load(
+              model_obj,
+              function (object) {
+                object.traverse(function (child) {
+                  // aka setTexture
+                  if (child instanceof THREE.Mesh) {
+                    child.material.map = texture;
+                  }
+                });
+                scene.add(object);
+              },
+              onProgress,
+              onError
+            );
+        });
 
       //
 
-      function animate() {
-        requestAnimationFrame(animate);
-        render();
+      renderer = new THREE.WebGLRenderer();
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+
+      controls = new ArcballControls(camera, renderer.domElement, scene);
+      controls.addEventListener("change", render);
+      controls.setGizmosVisible(false);
+
+      window.addEventListener("resize", onWindowResize);
+    }
+
+    function onWindowResize() {
+      const canvas = renderer.domElement;
+      // look up the size the canvas is being displayed
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      // adjust displayBuffer size to match
+      if (canvas.width !== width || canvas.height !== height) {
+        // you must pass false here or three.js sadly fights the browser
+        renderer.setSize(width, height, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+
+        // update any render target sizes here
+      }
+    }
+
+    //
+
+    function animate() {
+      requestAnimationFrame(animate);
+      render();
+    }
+
+    function render() {
+      if (blenderObj) {
+        blenderObj.rotation.y += 0.01;
+        blenderObj.rotation.x += 0.01;
       }
 
-      function render() {
-        if (blenderObj) {
-          blenderObj.rotation.y += 0.01;
-          blenderObj.rotation.x += 0.01;
-        }
+      renderer.render(scene, camera);
+    }
+  </script>
+  <div id="three-div"></div>
+</body>
 
-        renderer.render(scene, camera);
-      }
-    </script>
-    <div id="three-div"></div>
-  </body>
 </html>
